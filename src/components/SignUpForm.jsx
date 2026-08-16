@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { Description, Label, Radio, RadioGroup } from "@heroui/react";
 import { Card, Button } from "@heroui/react";
 import { signUp } from "@/lib/auth-client";
 
@@ -21,11 +21,14 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [role, setRole] = useState('seeker')
+  const [success,setSuccess]=useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
+    setSuccess('')
 
     const form = new FormData(e.currentTarget);
 
@@ -40,6 +43,8 @@ export default function SignUpForm() {
         name,
         email,
         password,
+        role,
+        callbackURL:'/'
       });
 
       if (result?.error) {
@@ -47,8 +52,11 @@ export default function SignUpForm() {
         setLoading(false);
         return;
       }
+      else{
+        setSuccess("Account Create Successfully")
+      }
 
-      router.push("/login");
+      
     } catch (err) {
       setError("Something went wrong. Please try again.");
     }
@@ -139,13 +147,37 @@ export default function SignUpForm() {
               )}
             </button>
           </div>
+          <div className="flex flex-col gap-4 mt-2">
+            <Label>Subscription plan</Label>
+            <RadioGroup defaultValue="seeker" name="plan-orientation" orientation="horizontal" onChange={value=> setRole(value)}>
+              <Radio value="seeker">
+                <Radio.Content>
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  Job Seeker
+                </Radio.Content>
+              </Radio>
+              <Radio value="recruiter">
+                <Radio.Content>
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  Recruiter
+                </Radio.Content>
+                
+              </Radio>
+            </RadioGroup>
+          </div>
         </div>
 
-        {error && (
+        {error ? 
           <p className="text-red-500 text-sm">
             {error}
+          </p> : <p className="text-green-500 text-sm">
+            {success}
           </p>
-        )}
+        }
 
         <Button
           type="submit"

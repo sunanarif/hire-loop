@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Card, Button } from "@heroui/react";
-import { signIn } from "@/lib/auth-client";
 
 import {
   FiMail,
@@ -13,6 +12,7 @@ import {
   FiEye,
   FiEyeOff,
 } from "react-icons/fi";
+import { signIn } from "@/lib/auth-client";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function LoginForm() {
         email,
         password,
       });
-
+      console.log(result);
       if (result?.error) {
         setError(result.error.message);
         setLoading(false);

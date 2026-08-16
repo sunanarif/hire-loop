@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@heroui/react";
+import { authClient } from "@/lib/auth-client";
+
 
 const NAV_LINKS = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -13,6 +15,21 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleSingOut= async()=>{
+    await authClient.signOut();
+  }
+
+  const { 
+        data: session, 
+        isPending, //loading state
+        error, //error object
+        refetch //refetch the session
+    } = authClient.useSession() 
+
+  const user =session?.user
+  console.log(session);
+
 
   return (
     <div className="sticky top-4 z-50 w-full px-4">
@@ -46,9 +63,14 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             <span className="h-5 w-px bg-white/15" />
-            <Link href="/login" className="text-sm font-medium text-indigo-400">
-              Sign In
-            </Link>
+            {
+              user ? <>
+                <h1>{user?.name}</h1>
+                <Button onClick={handleSingOut} className="rounded-full bg-indigo-600 px-5 font-medium text-white hover:bg-indigo-500">Sing Out</Button>
+              </> : <Link href="/auth/singin" className="text-sm font-medium text-indigo-400">
+                Sign In
+              </Link>
+            }
             <Button
               as={Link}
               href="/signup"
